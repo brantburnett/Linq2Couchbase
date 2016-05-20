@@ -78,5 +78,119 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration
 
             Assert.AreEqual(expected, n1QlQuery);
         }
+
+        [Test]
+        public void Test_Select_TwoProjections_FirstTyped()
+        {
+            // This test represents behavior that might be seen using OData
+            // Where the model in the bucket is projected, filtered, sorted, and limited
+            // Followed by an additional projection from a $select clause
+
+            var mockBucket = new Mock<IBucket>();
+            mockBucket.SetupGet(e => e.Name).Returns("default");
+
+            var query =
+                QueryFactory.Queryable<Contact>(mockBucket.Object)
+                    .Select(e => new ContactModel() {FirstName = e.FirstName, LastName = e.LastName})
+                    .OrderBy(e => e.FirstName)
+                    .Take(10)
+                    .Select(e => new {Key = "1234", Content = new {FullName = e.FirstName + " " + e.LastName}});
+
+            const string expected =
+                "SELECT '1234' as `Key`, {\"FullName\": ((`Extent1`.`fname` || ' ') || `Extent1`.`lname`)} as `Content` " +
+                "FROM `default` as `Extent1` ORDER BY `Extent1`.`fname` ASC LIMIT 10";
+
+            var n1QlQuery = CreateN1QlQuery(mockBucket.Object, query.Expression);
+
+            Assert.AreEqual(expected, n1QlQuery);
+        }
+
+        [Test]
+        public void Test_Select_TwoProjections_FirstAnonymous()
+        {
+            // This test represents behavior that might be seen using OData
+            // Where the model in the bucket is projected, filtered, sorted, and limited
+            // Followed by an additional projection from a $select clause
+
+            var mockBucket = new Mock<IBucket>();
+            mockBucket.SetupGet(e => e.Name).Returns("default");
+
+            var query =
+                QueryFactory.Queryable<Contact>(mockBucket.Object)
+                    .Select(e => new { e.FirstName, e.LastName })
+                    .OrderBy(e => e.FirstName)
+                    .Take(10)
+                    .Select(e => new { Key = "1234", Content = new { FullName = e.FirstName + " " + e.LastName } });
+
+            const string expected =
+                "SELECT '1234' as `Key`, {\"FullName\": ((`Extent1`.`fname` || ' ') || `Extent1`.`lname`)} as `Content` " +
+                "FROM `default` as `Extent1` ORDER BY `Extent1`.`fname` ASC LIMIT 10";
+
+            var n1QlQuery = CreateN1QlQuery(mockBucket.Object, query.Expression);
+
+            Assert.AreEqual(expected, n1QlQuery);
+        }
+
+        [Test]
+        public void Test_Select_TwoProjections_FirstQuerySource()
+        {
+            // This test represents behavior that might be seen using OData
+            // Where the model in the bucket is projected, filtered, sorted, and limited
+            // Followed by an additional projection from a $select clause
+
+            var mockBucket = new Mock<IBucket>();
+            mockBucket.SetupGet(e => e.Name).Returns("default");
+
+            var query =
+                QueryFactory.Queryable<Contact>(mockBucket.Object)
+                    .Select(e => e)
+                    .OrderBy(e => e.FirstName)
+                    .Take(10)
+                    .Select(e => new { Key = "1234", Content = new { FullName = e.FirstName + " " + e.LastName } });
+
+            const string expected =
+                "SELECT '1234' as `Key`, {\"FullName\": ((`Extent1`.`fname` || ' ') || `Extent1`.`lname`)} as `Content` " +
+                "FROM `default` as `Extent1` ORDER BY `Extent1`.`fname` ASC LIMIT 10";
+
+            var n1QlQuery = CreateN1QlQuery(mockBucket.Object, query.Expression);
+
+            Assert.AreEqual(expected, n1QlQuery);
+        }
+
+        [Test]
+        public void Test_Select_TwoProjections_NestedObjects()
+        {
+            // This test represents behavior that might be seen using OData
+            // Where the model in the bucket is projected, filtered, sorted, and limited
+            // Followed by an additional projection from a $select clause
+
+            var mockBucket = new Mock<IBucket>();
+            mockBucket.SetupGet(e => e.Name).Returns("default");
+
+            var query =
+                QueryFactory.Queryable<Contact>(mockBucket.Object)
+                    .Select(e => new { Name = new { e.FirstName, e.LastName }})
+                    .OrderBy(e => e.Name.FirstName)
+                    .Take(10)
+                    .Select(e => new { Key = "1234", Content = new { FullName = e.Name.FirstName + " " + e.Name.LastName } });
+
+            const string expected =
+                "SELECT '1234' as `Key`, {\"FullName\": ((`Extent1`.`fname` || ' ') || `Extent1`.`lname`)} as `Content` " +
+                "FROM `default` as `Extent1` ORDER BY `Extent1`.`fname` ASC LIMIT 10";
+
+            var n1QlQuery = CreateN1QlQuery(mockBucket.Object, query.Expression);
+
+            Assert.AreEqual(expected, n1QlQuery);
+        }
+
+        #region Helper Classes
+
+        public class ContactModel
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+        }
+
+        #endregion
     }
 }

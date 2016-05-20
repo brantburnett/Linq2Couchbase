@@ -60,9 +60,10 @@ namespace Couchbase.Linq.QueryGeneration
         private VisitStatus _visitStatus = VisitStatus.None;
 
         /// <summary>
-        /// Stores the mappings between expressions outside the group query to the extents inside
+        /// Stores the mappings between expressions outside a subquery to the extents inside.
+        /// May be used for grouping or for multiple select projections.
         /// </summary>
-        private ExpressionTransformerRegistry _groupingExpressionTransformerRegistry;
+        private ExpressionTransformerRegistry _expressionTransformerRegistry;
 
         /// <summary>
         /// Provides information about how scalar results should be extracted from the N1QL query result after execution.
@@ -198,7 +199,7 @@ namespace Couchbase.Linq.QueryGeneration
             }
             else if (fromClause.FromExpression is SubQueryExpression)
             {
-                VisitSubQueryFromClause(fromClause, (SubQueryExpression) fromClause.FromExpression);
+                VisitSubQueryFromClause(fromClause, (SubQueryExpression) fromClause.FromExpression, queryModel);
             }
             else if (fromClause.FromExpression is QuerySourceReferenceExpression)
             {
@@ -229,7 +230,7 @@ namespace Couchbase.Linq.QueryGeneration
             base.VisitMainFromClause(fromClause, queryModel);
         }
 
-        private void VisitSubQueryFromClause(MainFromClause fromClause, SubQueryExpression subQuery)
+        private void VisitSubQueryFromClause(MainFromClause fromClause, SubQueryExpression subQuery, QueryModel queryModel)
         {
             if (subQuery.QueryModel.ResultOperators.Any(p => p is GroupResultOperator))
             {
@@ -258,7 +259,46 @@ namespace Couchbase.Linq.QueryGeneration
             }
             else
             {
-                throw new NotSupportedException("Subqueries In The Main From Clause Are Only Supported For Grouping And Unions");
+                if (queryModel.BodyClauses.Any() || queryModel.ResultOperators.Any())
+                {
+                    throw new NotSupportedException(
+                        "Subqueries In The Main From Clause Are Only Supported For Grouping And Unions");
+                }
+
+                // We're performing an additional select projection against the subquery
+                VisitQueryModel(subQuery.QueryModel);
+
+                // drop the sub\query's select projection
+                _queryPartsAggregator.SelectPart = null;
+
+                if (subQuery.QueryModel.SelectClause.Selector is NewExpression)
+                {
+                    if (_expressionTransformerRegistry == null)
+                    {
+                        _expressionTransformerRegistry = new ExpressionTransformerRegistry();
+                    }
+
+                    _expressionTransformerRegistry.Register(
+                        new SelectProjectionNewExpressionTransfomer(new QuerySourceReferenceExpression(fromClause),
+                            (NewExpression)subQuery.QueryModel.SelectClause.Selector));
+                }
+                else if (subQuery.QueryModel.SelectClause.Selector is MemberInitExpression)
+                {
+                    if (_expressionTransformerRegistry == null)
+                    {
+                        _expressionTransformerRegistry = new ExpressionTransformerRegistry();
+                    }
+
+                    _expressionTransformerRegistry.Register(
+                        new SelectProjectionInitExpressionTransfomer(new QuerySourceReferenceExpression(fromClause),
+                            (MemberInitExpression)subQuery.QueryModel.SelectClause.Selector));
+                }
+                else if (subQuery.QueryModel.SelectClause.Selector is QuerySourceReferenceExpression)
+                {
+                    _queryGenerationContext.ExtentNameProvider.LinkExtents(
+                        ((QuerySourceReferenceExpression) subQuery.QueryModel.SelectClause.Selector).ReferencedQuerySource,
+                        fromClause);
+                }
             }
         }
 
@@ -322,12 +362,12 @@ namespace Couchbase.Linq.QueryGeneration
                 {
                     var selector = selectClause.Selector;
 
-                    if (_visitStatus == VisitStatus.AfterGroupSubquery)
+                    if (_expressionTransformerRegistry != null)
                     {
-                        // SELECT clauses must be remapped to refer directly to the extents in the grouping subquery
-                        // rather than refering to the output of the grouping subquery
+                        // SELECT clauses must be remapped to refer directly to the extents in the subquery
+                        // rather than refering to the output of the subquery
 
-                        selector = TransformingExpressionVisitor.Transform(selector, _groupingExpressionTransformerRegistry);
+                        selector = TransformingExpressionVisitor.Transform(selector, _expressionTransformerRegistry);
                     }
 
                     if (!_isAggregated)
@@ -627,7 +667,10 @@ namespace Couchbase.Linq.QueryGeneration
 
         protected virtual void VisitGroupResultOperator(GroupResultOperator groupResultOperator, QueryModel queryModel)
         {
-            _groupingExpressionTransformerRegistry = new ExpressionTransformerRegistry();
+            if (_expressionTransformerRegistry == null)
+            {
+                _expressionTransformerRegistry = new ExpressionTransformerRegistry();
+            }
 
             // Add GROUP BY clause for the grouping key
             // And add transformations for any references to the key
@@ -644,7 +687,7 @@ namespace Couchbase.Linq.QueryGeneration
 
                 // Use MultiKeyExpressionTransformer to remap access to the Key property
 
-                _groupingExpressionTransformerRegistry.Register(
+                _expressionTransformerRegistry.Register(
                     new MultiKeyExpressionTransfomer(_queryGenerationContext.GroupingQuerySource, newExpression));
             }
             else
@@ -655,7 +698,7 @@ namespace Couchbase.Linq.QueryGeneration
 
                 // Use KeyExpressionTransformer to remap access to the Key property
 
-                _groupingExpressionTransformerRegistry.Register(
+                _expressionTransformerRegistry.Register(
                     new KeyExpressionTransfomer(_queryGenerationContext.GroupingQuerySource, groupResultOperator.KeySelector));
             }
 
@@ -1217,12 +1260,12 @@ namespace Couchbase.Linq.QueryGeneration
 
         private string GetN1QlExpression(Expression expression)
         {
-            if (_visitStatus == VisitStatus.AfterGroupSubquery)
+            if (_expressionTransformerRegistry != null)
             {
-                // SELECT, HAVING, and ORDER BY clauses must be remapped to refer directly to the extents in the grouping subquery
-                // rather than refering to the output of the grouping subquery
+                // SELECT, HAVING, and ORDER BY clauses must be remapped to refer directly to the extents in the subquery
+                // rather than refering to the output of the subquery
 
-                expression = TransformingExpressionVisitor.Transform(expression, _groupingExpressionTransformerRegistry);
+                expression = TransformingExpressionVisitor.Transform(expression, _expressionTransformerRegistry);
             }
 
             return N1QlExpressionTreeVisitor.GetN1QlExpression(expression, _queryGenerationContext);

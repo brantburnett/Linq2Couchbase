@@ -127,6 +127,9 @@
     <Compile Include="Proxies\NewDocumentWrapper.cs" />
     <Compile Include="QueryGeneration\Expressions\StringComparisonExpression.cs" />
     <Compile Include="QueryGeneration\ExpressionTransformers\DateTimeComparisonExpressionTransformer.cs" />
+    <Compile Include="QueryGeneration\ExpressionTransformers\SelectProjectionInitExpressionTransformer.cs" />
+    <Compile Include="QueryGeneration\ExpressionTransformers\SelectProjectionExpressionTransformerBase.cs" />
+    <Compile Include="QueryGeneration\ExpressionTransformers\SelectProjectionNewExpressionTransformer.cs" />
     <Compile Include="QueryGeneration\ExpressionTransformers\StringComparisonExpressionTransformer.cs" />
     <Compile Include="QueryGeneration\ExpressionTransformers\EnumComparisonExpressionTransformer.cs" />
     <Compile Include="QueryGeneration\ExpressionTransformers\MultiKeyExpressionTransfomer.cs" />
