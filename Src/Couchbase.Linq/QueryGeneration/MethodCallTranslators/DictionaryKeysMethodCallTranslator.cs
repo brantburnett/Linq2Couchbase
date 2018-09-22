@@ -15,7 +15,8 @@ namespace Couchbase.Linq.QueryGeneration.MethodCallTranslators
 
         public IEnumerable<MethodInfo> SupportMethods => SupportedMethodsStatic;
 
-        public Expression Translate(MethodCallExpression methodCallExpression, N1QlExpressionTreeVisitor expressionTreeVisitor)
+        public Expression Translate(MethodCallExpression methodCallExpression,
+            IN1QlExpressionTreeVisitor expressionTreeVisitor)
         {
             if (methodCallExpression == null)
             {

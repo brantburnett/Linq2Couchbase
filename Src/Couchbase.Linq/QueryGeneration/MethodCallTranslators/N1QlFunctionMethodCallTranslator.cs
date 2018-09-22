@@ -49,7 +49,8 @@ namespace Couchbase.Linq.QueryGeneration.MethodCallTranslators
         /// <param name="methodCallExpression">Method call to be translated.  Must match the method provided to the constructor.</param>
         /// <param name="expressionTreeVisitor"><see cref="N1QlExpressionTreeVisitor"/> to use to visit parameters.</param>
         /// <returns>Original or altered expression.</returns>
-        public Expression Translate(MethodCallExpression methodCallExpression, N1QlExpressionTreeVisitor expressionTreeVisitor)
+        public Expression Translate(MethodCallExpression methodCallExpression,
+            IN1QlExpressionTreeVisitor expressionTreeVisitor)
         {
             if (methodCallExpression == null)
             {
