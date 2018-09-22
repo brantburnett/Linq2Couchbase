@@ -540,8 +540,9 @@ namespace Couchbase.Linq.QueryGeneration
                 if (_queryPartsAggregator.Extents.Count > 1)
                 {
                     // There is more than one extent, so one may be an INNER NEST
-                    var innerNestDetectingVistor = new InnerNestDetectingExpressionVisitor(_queryPartsAggregator);
-                    predicate = innerNestDetectingVistor.Visit(predicate);
+                    var innerNestDetectingVisitor =
+                        new InnerNestDetectingExpressionVisitor(_queryPartsAggregator.Extents);
+                    predicate = innerNestDetectingVisitor.Visit(predicate);
                 }
 
                 _queryPartsAggregator.AddWherePart(GetN1QlExpression(predicate));

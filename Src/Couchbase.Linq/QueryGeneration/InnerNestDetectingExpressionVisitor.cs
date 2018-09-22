@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Couchbase.Linq.QueryGeneration.FromParts;
@@ -17,15 +18,15 @@ namespace Couchbase.Linq.QueryGeneration
     /// </summary>
     internal class InnerNestDetectingExpressionVisitor : RelinqExpressionVisitor
     {
-        private readonly QueryPartsAggregator _queyPartsAggregator;
+        private readonly IList<ExtentPart> _currentExtents;
 
         /// <summary>
         /// Creates a new InnerNestDetectingExpressionVisitor.
         /// </summary>
-        /// <param name="queyPartsAggregator"><see cref="QueryPartsAggregator"/> for the current query.</param>
-        public InnerNestDetectingExpressionVisitor(QueryPartsAggregator queyPartsAggregator)
+        /// <param name="currentExtents">Extents of the current query</param>
+        public InnerNestDetectingExpressionVisitor(IList<ExtentPart> currentExtents)
         {
-            _queyPartsAggregator = queyPartsAggregator ?? throw new ArgumentNullException(nameof(queyPartsAggregator));
+            _currentExtents = currentExtents ?? throw new ArgumentNullException(nameof(currentExtents));
         }
 
         protected override Expression VisitBinary(BinaryExpression node)
@@ -78,7 +79,7 @@ namespace Couchbase.Linq.QueryGeneration
             }
 
             // See if this group join is a LEFT OUTER NEST
-            var ansiJoinPart = _queyPartsAggregator.Extents.OfType<AnsiJoinPart>()
+            var ansiJoinPart = _currentExtents.OfType<AnsiJoinPart>()
                 .FirstOrDefault(p => p.QuerySource == groupJoinClause);
 
             if (ansiJoinPart != null && ansiJoinPart.JoinType == JoinTypes.LeftNest)
