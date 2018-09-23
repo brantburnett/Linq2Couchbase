@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Couchbase.Core.Serialization;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
+    [DataSet("beers")]
     public class Beer
     {
         [JsonProperty("name")]

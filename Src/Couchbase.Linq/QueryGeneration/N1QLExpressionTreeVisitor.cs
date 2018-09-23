@@ -411,7 +411,7 @@ namespace Couchbase.Linq.QueryGeneration
         /// <summary>
         ///     Visits a coalese expression recursively, building a IFMISSINGORNULL function
         /// </summary>
-        private Expression VisitCoalesceExpression(BinaryExpression expression)
+        protected virtual Expression VisitCoalesceExpression(BinaryExpression expression)
         {
             _expression.Append("IFMISSINGORNULL(");
             Visit(expression.Left);

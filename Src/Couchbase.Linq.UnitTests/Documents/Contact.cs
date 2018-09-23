@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.UnitTests.Documents
 {
+    [DataSet("contacts")]
     public sealed class Contact
     {
         [JsonProperty("age")]

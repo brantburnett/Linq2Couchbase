@@ -8,6 +8,7 @@ using Couchbase.Configuration.Client;
 using Couchbase.Core;
 using Couchbase.Core.Buckets;
 using Couchbase.IO;
+using Couchbase.Linq.Analytics;
 using Couchbase.Linq.Filters;
 using Couchbase.Linq.Metadata;
 using Couchbase.Linq.Proxies;
@@ -86,6 +87,13 @@ namespace Couchbase.Linq
             }
 
             return query;
+        }
+
+        public IQueryable<T> Analyze<T>()
+        {
+            var dataSetName = DataSetNameProvider.Current.GetDataSetName(typeof(T));
+
+            return new AnalyticsDataSetQueryable<T>(dataSetName, this);
         }
 
         /// <summary>
