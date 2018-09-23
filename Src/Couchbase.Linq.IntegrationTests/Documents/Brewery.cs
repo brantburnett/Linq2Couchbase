@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
+    [DataSet("breweries")]
     public class Brewery
     {
         [JsonProperty("name")]

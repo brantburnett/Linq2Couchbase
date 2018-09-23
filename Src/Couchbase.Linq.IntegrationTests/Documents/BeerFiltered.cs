@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
-    [Filters.DocumentTypeFilter("beer")]
+    [Filters.DocumentTypeFilter("beer"), DataSet("beers")]
     public class BeerFiltered
     {
         [JsonProperty("name")]

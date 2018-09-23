@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
+    [DataSet("beers")]
     public class BeerWithEnum
     {
         [Key]

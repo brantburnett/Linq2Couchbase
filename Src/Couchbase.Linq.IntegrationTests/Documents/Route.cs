@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Couchbase.Linq.Analytics;
 using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
+    [DataSet("routes")]
     public class Route
     {
         public string Id { get; set; }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Couchbase.Linq.Analytics;
+using Newtonsoft.Json;
 
 namespace Couchbase.Linq.IntegrationTests.Documents
 {
@@ -13,6 +14,7 @@ namespace Couchbase.Linq.IntegrationTests.Documents
           "country": "United States"
         }
      * */
+    [DataSet("airlines")]
     public class Airline
     {
         [JsonProperty("id")]
