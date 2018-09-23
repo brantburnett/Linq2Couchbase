@@ -12,6 +12,6 @@ namespace Couchbase.Linq.QueryGeneration
     {
         IEnumerable<MethodInfo> SupportMethods { get; }
 
-        Expression Translate(MethodCallExpression methodCallExpression, IN1QlExpressionTreeVisitor expressionTreeVisitor);
+        Expression Translate(MethodCallExpression methodCallExpression, IN1QlExpressionTreeVisitor expressionTreeVisitor, N1QlQueryGenerationContext context);
     }
 }

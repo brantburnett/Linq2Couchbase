@@ -50,7 +50,7 @@ namespace Couchbase.Linq.QueryGeneration.MethodCallTranslators
         /// <param name="expressionTreeVisitor"><see cref="N1QlExpressionTreeVisitor"/> to use to visit parameters.</param>
         /// <returns>Original or altered expression.</returns>
         public Expression Translate(MethodCallExpression methodCallExpression,
-            IN1QlExpressionTreeVisitor expressionTreeVisitor)
+            IN1QlExpressionTreeVisitor expressionTreeVisitor, N1QlQueryGenerationContext context)
         {
             if (methodCallExpression == null)
             {

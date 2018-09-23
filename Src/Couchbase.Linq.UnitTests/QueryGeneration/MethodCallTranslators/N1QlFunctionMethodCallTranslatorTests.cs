@@ -100,7 +100,8 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act/Assert
 
-            var result = Assert.Throws<ArgumentNullException>(() => transformer.Translate(null, visitor.Object));
+            var result = Assert.Throws<ArgumentNullException>(
+                () => transformer.Translate(null, visitor.Object, new N1QlQueryGenerationContext()));
 
             Assert.AreEqual("methodCallExpression", result.ParamName);
         }
@@ -122,7 +123,8 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act/Assert
 
-            var result = Assert.Throws<ArgumentException>(() => transformer.Translate(expression, visitor.Object));
+            var result = Assert.Throws<ArgumentException>(
+                () => transformer.Translate(expression, visitor.Object, new N1QlQueryGenerationContext()));
 
             Assert.AreEqual("methodCallExpression", result.ParamName);
         }
@@ -139,7 +141,8 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act/Assert
 
-            var result = Assert.Throws<ArgumentNullException>(() => transformer.Translate(expression, null));
+            var result = Assert.Throws<ArgumentNullException>(
+                () => transformer.Translate(expression, null, new N1QlQueryGenerationContext()));
 
             Assert.AreEqual("expressionTreeVisitor", result.ParamName);
         }
@@ -161,7 +164,7 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act
 
-            transformer.Translate(expression, visitor.Object);
+            transformer.Translate(expression, visitor.Object, new N1QlQueryGenerationContext());
             var result = visitor.Object.GetN1QlExpression();
 
             // Assert
@@ -187,7 +190,7 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act
 
-            transformer.Translate(expression, visitor.Object);
+            transformer.Translate(expression, visitor.Object, new N1QlQueryGenerationContext());
             var result = visitor.Object.GetN1QlExpression();
 
             // Assert
@@ -214,7 +217,7 @@ namespace Couchbase.Linq.UnitTests.QueryGeneration.MethodCallTranslators
 
             // Act
 
-            transformer.Translate(expression, visitor.Object);
+            transformer.Translate(expression, visitor.Object, new N1QlQueryGenerationContext());
             var result = visitor.Object.GetN1QlExpression();
 
             // Assert

@@ -22,7 +22,7 @@ namespace Couchbase.Linq.QueryGeneration.MethodCallTranslators
         }
 
         public Expression Translate(MethodCallExpression methodCallExpression,
-            IN1QlExpressionTreeVisitor expressionTreeVisitor)
+            IN1QlExpressionTreeVisitor expressionTreeVisitor, N1QlQueryGenerationContext context)
         {
             if (methodCallExpression == null)
             {

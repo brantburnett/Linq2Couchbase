@@ -54,7 +54,8 @@ namespace Couchbase.Linq.UnitTests
                 MemberNameResolver = Test.MemberNameResolver,
                 MethodCallTranslatorProvider = new DefaultMethodCallTranslatorProvider(),
                 Serializer = new Core.Serialization.DefaultSerializer(),
-                ClusterVersion = _clusterVersion
+                ClusterVersion = _clusterVersion,
+                IsAnalyticsQuery = true
             };
 
             var visitor = new AnalyticsQueryModelVisitor(queryGenerationContext);

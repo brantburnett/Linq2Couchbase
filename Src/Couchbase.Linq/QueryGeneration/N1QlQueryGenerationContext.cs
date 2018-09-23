@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Couchbase.Core.Serialization;
 using Couchbase.Core.Version;
 using Couchbase.Linq.QueryGeneration.MemberNameResolvers;
-using Couchbase.Linq.Serialization;
-using Couchbase.Linq.Versioning;
-using Newtonsoft.Json.Serialization;
 using Remotion.Linq.Clauses.Expressions;
 
 namespace Couchbase.Linq.QueryGeneration
@@ -18,14 +11,13 @@ namespace Couchbase.Linq.QueryGeneration
     /// </summary>
     internal class N1QlQueryGenerationContext
     {
-        private ISerializationConverterProvider _serializationFormatProvider;
-
         public N1QlExtentNameProvider ExtentNameProvider { get; set; }
         public IMemberNameResolver MemberNameResolver { get; set; }
         public IMethodCallTranslatorProvider MethodCallTranslatorProvider { get; set; }
         public ParameterAggregator ParameterAggregator { get; set; }
         public ITypeSerializer Serializer { get; set; }
         public ClusterVersion ClusterVersion { get; set; }
+        public bool IsAnalyticsQuery { get; set; }
 
         /// <summary>
         /// Stores a reference to the current grouping subquery
@@ -51,7 +43,7 @@ namespace Couchbase.Linq.QueryGeneration
             // In the future we may want some properties get new values when working in a union
             // This method provides a simple point for this extension
 
-            return new N1QlQueryGenerationContext()
+            return new N1QlQueryGenerationContext
             {
                 ExtentNameProvider = ExtentNameProvider,
                 MemberNameResolver = MemberNameResolver,

@@ -156,7 +156,8 @@ namespace Couchbase.Linq.Execution
                 MemberNameResolver = memberNameResolver,
                 MethodCallTranslatorProvider = methodCallTranslatorProvider,
                 Serializer = serializer,
-                ClusterVersion = VersionProvider.Current.GetVersion(_bucketContext.Bucket)
+                ClusterVersion = VersionProvider.Current.GetVersion(_bucketContext.Bucket),
+                IsAnalyticsQuery = true
             };
 
             var visitor = new AnalyticsQueryModelVisitor(queryGenerationContext);

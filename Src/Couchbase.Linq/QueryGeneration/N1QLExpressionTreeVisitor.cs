@@ -464,7 +464,7 @@ namespace Couchbase.Linq.QueryGeneration
 
             if (methodCallTranslator != null)
             {
-                return methodCallTranslator.Translate(expression, this);
+                return methodCallTranslator.Translate(expression, this, QueryGenerationContext);
             }
 
             return base.VisitMethodCall(expression);
