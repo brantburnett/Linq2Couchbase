@@ -236,9 +236,10 @@ namespace Couchbase.Linq.QueryGeneration
             if (_queryPartsAggregator.QueryType == N1QlQueryType.SubqueryAny)
             {
                 // For Any type subqueries, the select statement is unused
-                // So just put a *
+                // So just put the extent
 
-                _queryPartsAggregator.SelectPart = "*";
+                _queryPartsAggregator.SelectPart =
+                    _queryGenerationContext.ExtentNameProvider.GetExtentName(queryModel.MainFromClause);
             }
             else if (_queryPartsAggregator.QueryType == N1QlQueryType.SubqueryAll)
             {

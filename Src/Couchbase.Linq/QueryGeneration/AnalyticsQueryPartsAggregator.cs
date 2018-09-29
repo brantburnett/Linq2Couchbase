@@ -147,7 +147,7 @@ namespace Couchbase.Linq.QueryGeneration
             }
             else if (QueryType == N1QlQueryType.SubqueryAny)
             {
-                sb.AppendFormat("ANY {0} IN (", SubqueryAnyAllExtentName);
+                sb.Append("EXISTS (");
             }
             else if (QueryType == N1QlQueryType.SubqueryAll)
             {
@@ -219,13 +219,9 @@ namespace Couchbase.Linq.QueryGeneration
                 sb.Append(OffsetPart);
             }
 
-            if (QueryType == N1QlQueryType.Subquery)
+            if (QueryType == N1QlQueryType.Subquery || QueryType == N1QlQueryType.SubqueryAny)
             {
                 sb.Append(')');
-            }
-            else if (QueryType == N1QlQueryType.SubqueryAny)
-            {
-                sb.Append(") SATISFIES true END");
             }
             else if (QueryType == N1QlQueryType.SubqueryAll)
             {
