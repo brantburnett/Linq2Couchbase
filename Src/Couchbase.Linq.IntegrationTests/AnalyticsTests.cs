@@ -1132,6 +1132,7 @@ namespace Couchbase.Linq.IntegrationTests
         }
 
         [Test]
+        [Ignore("Failing due to MB-31457")]
         public void DateTime_DateDiff()
         {
             var bucket = ClusterHelper.GetBucket("beer-sample");
