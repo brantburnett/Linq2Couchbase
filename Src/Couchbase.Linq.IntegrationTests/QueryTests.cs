@@ -14,12 +14,6 @@ namespace Couchbase.Linq.IntegrationTests
     [TestFixture]
     public class QueryTests : N1QlTestBase
     {
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            PrepareBeerDocuments();
-        }
-
         [SetUp]
         public void TestSetUp()
         {
@@ -1766,17 +1760,6 @@ namespace Couchbase.Linq.IntegrationTests
             {
                 Console.WriteLine("Beer {0} is in {1:MMMM yyyy}", b.Name, b.Updated);
             }
-        }
-
-        private void PrepareBeerDocuments()
-        {
-            var bucket = ClusterHelper.GetBucket("beer-sample");
-            var query = new QueryRequest(
-                @"UPDATE `beer-sample` SET updatedUnixMillis = STR_TO_MILLIS(updated)
-                  WHERE type = 'beer' AND updateUnixMillis IS MISSING");
-
-            var result = bucket.Query<dynamic>(query);
-            result.EnsureSuccess();
         }
 
         #endregion
