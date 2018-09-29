@@ -1251,8 +1251,7 @@ namespace Couchbase.Linq.IntegrationTests
             var context = new BucketContext(bucket);
 
             var breweries =
-                from brewery in context.Analyze<Dictionary<string, object>>()
-                where brewery["type"].ToString() == "brewery"
+                from brewery in context.Analyze<Dictionary<string, object>>("breweries")
                 select brewery;
 
             var results = breweries.Take(1).ToList();
@@ -1266,8 +1265,8 @@ namespace Couchbase.Linq.IntegrationTests
             var context = new BucketContext(bucket);
 
             var breweries =
-                from brewery in context.Analyze<Dictionary<string, object>>()
-                where brewery["type"].ToString() == "brewery" && brewery.ContainsKey("address")
+                from brewery in context.Analyze<Dictionary<string, object>>("breweries")
+                where brewery.ContainsKey("address")
                 select brewery;
 
             var results = breweries.Take(1).ToList();
@@ -1281,8 +1280,7 @@ namespace Couchbase.Linq.IntegrationTests
             var context = new BucketContext(bucket);
 
             var breweries =
-                from brewery in context.Analyze<Dictionary<string, object>>()
-                where brewery["type"].ToString() == "brewery"
+                from brewery in context.Analyze<Dictionary<string, object>>("breweries")
                 select brewery.Keys.ToList();
 
             var results = breweries.Take(1).ToList();
@@ -1297,8 +1295,7 @@ namespace Couchbase.Linq.IntegrationTests
             var context = new BucketContext(bucket);
 
             var breweries =
-                from brewery in context.Analyze<Dictionary<string, object>>()
-                where brewery["type"].ToString() == "brewery"
+                from brewery in context.Analyze<Dictionary<string, object>>("breweries")
                 select brewery.Values.ToList();
 
             var results = breweries.Take(1).ToList();

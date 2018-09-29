@@ -91,8 +91,11 @@ namespace Couchbase.Linq
 
         public IQueryable<T> Analyze<T>()
         {
-            var dataSetName = DataSetNameProvider.Current.GetDataSetName(typeof(T));
+            return Analyze<T>(DataSetNameProvider.Current.GetDataSetName(typeof(T)));
+        }
 
+        public IQueryable<T> Analyze<T>(string dataSetName)
+        {
             return new AnalyticsDataSetQueryable<T>(dataSetName, this);
         }
 
