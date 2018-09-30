@@ -219,16 +219,7 @@ namespace Couchbase.Linq.QueryGeneration
 
         public virtual void VisitHintClause(HintClause clause, ExtentPart fromPart)
         {
-            if (fromPart.Hints == null)
-            {
-                fromPart.Hints = new List<HintClause>();
-            }
-            else if (fromPart.Hints.Any(p => p.GetType() == clause.GetType()))
-            {
-                throw new NotSupportedException($"Only one {clause.GetType().Name} is allowed per extent.");
-            }
-
-            fromPart.Hints.Add(clause);
+            throw new NotSupportedException("N1QL for Analytics does not support hints");
         }
 
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
