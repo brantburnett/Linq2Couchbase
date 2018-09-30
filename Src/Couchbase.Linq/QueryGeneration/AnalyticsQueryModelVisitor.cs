@@ -479,7 +479,7 @@ namespace Couchbase.Linq.QueryGeneration
 
         private void VisitUnion(SubQueryExpression source, bool distinct)
         {
-            var queryModelVisitor = new N1QlQueryModelVisitor(_queryGenerationContext.CloneForUnion());
+            var queryModelVisitor = new AnalyticsQueryModelVisitor(_queryGenerationContext.CloneForUnion());
 
             queryModelVisitor.VisitQueryModel(source.QueryModel);
             var unionQuery = queryModelVisitor.GetQuery();

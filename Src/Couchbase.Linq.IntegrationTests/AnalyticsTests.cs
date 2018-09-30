@@ -774,6 +774,7 @@ namespace Couchbase.Linq.IntegrationTests
         }
 
         [Test]
+        [Ignore("UNION set semantics are not yet supported by Analytics")]
         public void SubqueryTests_Union()
         {
             var bucket = ClusterHelper.GetBucket("beer-sample");
